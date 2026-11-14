@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Ordem de Serviço</title>
+    <style>
+        @page { size: A4; margin: 20mm; }
+        body { font-family: Helvetica, Arial, sans-serif; font-size: 11pt; color: #222; }
+        .cabecalho { border-bottom: 2px solid #222; padding-bottom: 8px; margin-bottom: 16px; }
+        .cabecalho h1 { margin: 0; font-size: 18pt; }
+        .cabecalho p { margin: 2px 0 0 0; font-size: 10pt; color: #555; }
+        h2 { font-size: 12pt; margin: 16px 0 6px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #999; padding: 6px; text-align: left; }
+        th { background-color: #eee; }
+        .total { text-align: right; font-size: 13pt; font-weight: bold; margin-top: 12px; }
+    </style>
+</head>
+<body>
+<div class="cabecalho">
+    <h1>Centro Automotivo Paraná</h1>
+    <p>Ordem de Serviço nº 0001</p>
+</div>
+
+<h2>Cliente e veículo</h2>
+<p>Cliente: João da Silva (teste)<br/>
+    Telefone: (00) 00000-0000<br/>
+    Placa: ABC-1234
+    Modelo: Corsa 8.0 turbo</p>
+
+<h2>Itens</h2>
+<table>
+    <thead>
+    <tr><th>Descrição</th><th>Qtd</th><th>Valor unit.</th><th>Valor total</th></tr>
+    </thead>
+    <tbody>
+    <tr><td>Serviço</td><td>Troca de óleo</td><td>1</td><td>R$ 80,00</td></tr>
+    <tr><td>Peça</td><td>Filtro de óleo</td><td>1</td><td>R$ 35,00</td></tr>
+    </tbody>
+</table>
+
+<p class="total">Total: R$ 115,00</p>
+</body>
+</html>
