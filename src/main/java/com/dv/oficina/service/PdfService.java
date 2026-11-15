@@ -1,5 +1,6 @@
 package com.dv.oficina.service;
 
+import com.dv.oficina.dto.response.OrdemServicoResponse;
 import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.thymeleaf.context.Context;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -16,11 +18,12 @@ public class PdfService {
 
     private final TemplateEngine templateEngine;
 
-    public byte[] gerarPdfTeste() {
-        // 1. Thymeleaf transforma o template em uma String HTML
-        String html = templateEngine.process("os-template", new Context());
+    public byte[] gerarPdf(OrdemServicoResponse os) {
+        Context context = new Context(Locale.of("pt", "BR"));
+        context.setVariable("os", os);
 
-        // 2. OpenHTMLtoPDF transforma o HTML em bytes de PDF
+        String html = templateEngine.process("os-template", context);
+
         try (ByteArrayOutputStream saida = new ByteArrayOutputStream()) {
             PdfRendererBuilder builder = new PdfRendererBuilder();
             builder.useFastMode();
@@ -29,7 +32,7 @@ public class PdfService {
             builder.run();
             return saida.toByteArray();
         } catch (IOException e) {
-            throw new UncheckedIOException("Falha ao gerar o PDF", e);
+            throw new UncheckedIOException("Falha ao gerar o PDF da OS " + os.id(), e);
         }
     }
 }

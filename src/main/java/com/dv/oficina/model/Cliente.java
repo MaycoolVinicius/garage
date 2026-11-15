@@ -15,9 +15,9 @@ public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 120)
     private String nome;
-    @Column(nullable = false, length = 11)
+    @Column(nullable = false, length = 20)
     private String telefone;
 
 }

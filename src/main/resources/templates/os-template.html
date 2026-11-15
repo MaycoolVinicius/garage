@@ -14,32 +14,45 @@
         table { width: 100%; border-collapse: collapse; }
         th, td { border: 1px solid #999; padding: 6px; text-align: left; }
         th { background-color: #eee; }
+        td.num, th.num { text-align: right; }
         .total { text-align: right; font-size: 13pt; font-weight: bold; margin-top: 12px; }
     </style>
 </head>
 <body>
 <div class="cabecalho">
     <h1>Centro Automotivo Paraná</h1>
-    <p>Ordem de Serviço nº 0001</p>
+    <p th:text="'Ordem de Serviço nº ' + ${os.id} + ' · ' + ${#temporals.format(os.dataAbertura, 'dd/MM/yyyy HH:mm')}">Ordem de Serviço</p>
 </div>
 
 <h2>Cliente e veículo</h2>
-<p>Cliente: João da Silva (teste)<br/>
-    Telefone: (00) 00000-0000<br/>
-    Placa: ABC-1234
-    Modelo: Corsa 8.0 turbo</p>
+<p>
+    Cliente: <span th:text="${os.nomeCliente}">Nome</span><br/>
+    Telefone: <span th:text="${os.telefone}">Telefone</span><br/>
+    Placa: <span th:text="${os.placa}">Placa</span>
+</p>
 
 <h2>Itens</h2>
 <table>
     <thead>
-    <tr><th>Descrição</th><th>Qtd</th><th>Valor unit.</th><th>Valor total</th></tr>
+    <tr>
+        <th>Tipo</th>
+        <th>Descrição</th>
+        <th class="num">Qtd</th>
+        <th class="num">Valor unit.</th>
+        <th class="num">Subtotal</th>
+    </tr>
     </thead>
     <tbody>
-    <tr><td>Serviço</td><td>Troca de óleo</td><td>1</td><td>R$ 80,00</td></tr>
-    <tr><td>Peça</td><td>Filtro de óleo</td><td>1</td><td>R$ 35,00</td></tr>
+    <tr th:each="item : ${os.itens}">
+        <td th:text="${item.tipo.name() == 'PECA'} ? 'Peça' : 'Serviço'">Tipo</td>
+        <td th:text="${item.descricao}">Descrição</td>
+        <td class="num" th:text="${item.quantidade}">1</td>
+        <td class="num" th:text="'R$ ' + ${#numbers.formatDecimal(item.valorUnitario, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</td>
+        <td class="num" th:text="'R$ ' + ${#numbers.formatDecimal(item.subtotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</td>
+    </tr>
     </tbody>
 </table>
 
-<p class="total">Total: R$ 115,00</p>
+<p class="total" th:text="'Total: R$ ' + ${#numbers.formatDecimal(os.valorTotal, 1, 'POINT', 2, 'COMMA')}">Total</p>
 </body>
 </html>
