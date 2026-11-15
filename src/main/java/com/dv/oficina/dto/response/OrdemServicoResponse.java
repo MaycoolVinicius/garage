@@ -11,6 +11,9 @@ public record OrdemServicoResponse(
         String nomeCliente,
         String telefone,
         String placa,
+        String modelo,
+        Integer km,
+        String observacoes,
         LocalDateTime dataAbertura,
         List<ItemResponse> itens,
         BigDecimal valorTotal

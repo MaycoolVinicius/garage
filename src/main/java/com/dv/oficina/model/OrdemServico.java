@@ -28,6 +28,14 @@ public class OrdemServico {
     @Column(nullable = false, length = 10)
     private String placa;
 
+    @Column(length = 80)
+    private String modelo;
+
+    private Integer km;
+
+    @Column(length = 1000)
+    private String observacoes;
+
     @Column(nullable = false)
     private LocalDateTime dataAbertura = LocalDateTime.now();
 

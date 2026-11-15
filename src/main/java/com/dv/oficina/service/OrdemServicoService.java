@@ -38,6 +38,9 @@ public class OrdemServicoService {
         OrdemServico os = new OrdemServico();
         os.setCliente(cliente);
         os.setPlaca(request.placa().trim().toUpperCase());
+        os.setModelo(textoOuNulo(request.modelo()));
+        os.setKm(request.km());
+        os.setObservacoes(textoOuNulo(request.observacoes()));
 
         request.itens().forEach(dto -> {
             ItemServico item = new ItemServico();
@@ -73,6 +76,9 @@ public class OrdemServicoService {
                 os.getCliente().getNome(),
                 os.getCliente().getTelefone(),
                 os.getPlaca(),
+                os.getModelo(),
+                os.getKm(),
+                os.getObservacoes(),
                 os.getDataAbertura(),
                 itens,
                 os.getValorTotal());
@@ -92,5 +98,8 @@ public class OrdemServicoService {
                         os.getDataAbertura(),
                         os.getValorTotal()))
                 .toList();
+    }
+    private String textoOuNulo(String texto) {
+        return (texto == null || texto.isBlank()) ? null : texto.trim();
     }
 }
