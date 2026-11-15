@@ -1,5 +1,6 @@
 package com.dv.oficina.service;
 
+import com.dv.oficina.dto.OrdemServicoResumo;
 import com.dv.oficina.dto.response.ItemResponse;
 import com.dv.oficina.dto.request.OrdemServicoRequest;
 import com.dv.oficina.dto.response.OrdemServicoResponse;
@@ -9,10 +10,13 @@ import com.dv.oficina.model.OrdemServico;
 import com.dv.oficina.repository.ClienteRepository;
 import com.dv.oficina.repository.OrdemServicoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -72,5 +76,21 @@ public class OrdemServicoService {
                 os.getDataAbertura(),
                 itens,
                 os.getValorTotal());
+    }
+    @Transactional(readOnly = true)
+    public List<OrdemServicoResumo> listar(String busca) {
+        var pagina = PageRequest.of(0, 50);
+        List<OrdemServico> resultado = (busca == null || busca.isBlank())
+                ? ordemServicoRepository.findAllByOrderByDataAberturaDesc(pagina)
+                : ordemServicoRepository.buscar(busca.trim(), pagina);
+
+        return resultado.stream()
+                .map(os -> new OrdemServicoResumo(
+                        os.getId(),
+                        os.getCliente().getNome(),
+                        os.getPlaca(),
+                        os.getDataAbertura(),
+                        os.getValorTotal()))
+                .toList();
     }
 }
