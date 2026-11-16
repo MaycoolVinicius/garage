@@ -3,56 +3,145 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Ordem de Serviço</title>
+    <title th:text="'Ordem de Serviço ' + ${os.id}">Ordem de Serviço</title>
     <style>
-        @page { size: A4; margin: 20mm; }
-        body { font-family: Helvetica, Arial, sans-serif; font-size: 11pt; color: #222; }
-        .cabecalho { border-bottom: 2px solid #222; padding-bottom: 8px; margin-bottom: 16px; }
-        .cabecalho h1 { margin: 0; font-size: 18pt; }
-        .cabecalho p { margin: 2px 0 0 0; font-size: 10pt; color: #555; }
-        h2 { font-size: 12pt; margin: 16px 0 6px 0; }
+        @page { size: A4; margin: 12mm; }
+        body { font-family: Helvetica, Arial, sans-serif; font-size: 9.5pt; color: #111; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #999; padding: 6px; text-align: left; }
-        th { background-color: #eee; }
-        td.num, th.num { text-align: right; }
-        .total { text-align: right; font-size: 13pt; font-weight: bold; margin-top: 12px; }
+
+        .cab { border: 1px solid #000; margin-bottom: 4mm; }
+        .cab td { vertical-align: middle; }
+        .logo { width: 30mm; padding: 0; background-color: #000; text-align: center; }
+        .logo img { width: 30mm; height: 30mm; }
+        .empresa { padding: 3mm; text-align: center; line-height: 1.35; }
+        .empresa .nome { font-size: 13pt; font-weight: bold; }
+
+        .titulo { margin: 0 0 3mm 0; text-align: center; font-size: 14pt; font-weight: bold; letter-spacing: 1px; }
+
+        .campos td { border: 1px solid #000; padding: 2mm 3mm; }
+        .rotulo { display: block; font-size: 7.5pt; color: #444; }
+
+        .caixa { margin-bottom: 3mm; padding: 2mm 3mm; border: 1px solid #000; }
+        .caixa h2 { margin: 0 0 1mm 0; font-size: 9pt; }
+        .obs { white-space: pre-wrap; }
+
+        h3 { margin: 4mm 0 1mm 0; font-size: 11pt; }
+        .itens th, .itens td { padding: 1.5mm 2mm; border: 1px solid #000; text-align: left; }
+        .itens th { background-color: #e6e6e6; font-size: 8.5pt; }
+        .itens tr { page-break-inside: avoid; }
+        .num { text-align: right; }
+        .subtotal td { background-color: #f4f4f4; font-weight: bold; }
+
+        .total { margin-top: 5mm; text-align: right; font-size: 14pt; font-weight: bold; }
     </style>
 </head>
 <body>
-<div class="cabecalho">
-    <h1>Centro Automotivo Paraná</h1>
-    <p th:text="'Ordem de Serviço nº ' + ${os.id} + ' · ' + ${#temporals.format(os.dataAbertura, 'dd/MM/yyyy HH:mm')}">Ordem de Serviço</p>
-</div>
 
-<h2>Cliente e veículo</h2>
-<p>
-    Cliente: <span th:text="${os.nomeCliente}">Nome</span><br/>
-    Telefone: <span th:text="${os.telefone}">Telefone</span><br/>
-    Placa: <span th:text="${os.placa}">Placa</span>
-</p>
-
-<h2>Itens</h2>
-<table>
-    <thead>
+<table class="cab">
     <tr>
-        <th>Tipo</th>
-        <th>Descrição</th>
-        <th class="num">Qtd</th>
-        <th class="num">Valor unit.</th>
-        <th class="num">Subtotal</th>
+        <td class="logo" th:if="${empresa.logo != null}">
+            <img th:src="${empresa.logo}" alt="Logo"/>
+        </td>
+        <td class="empresa">
+            <div class="nome" th:text="${empresa.nome}">Nome da oficina</div>
+            <div th:if="${empresa.razaoSocial != null}" th:text="${empresa.razaoSocial}">Razão social</div>
+            <div th:if="${empresa.cnpj != null}" th:text="'CNPJ: ' + ${fmt.cnpj(empresa.cnpj)}">CNPJ</div>
+            <div th:if="${empresa.endereco != null}" th:text="${empresa.endereco}">Endereço</div>
+            <div th:if="${empresa.telefone != null}" th:text="'Fone: ' + ${empresa.telefone}">Fone</div>
+            <div th:if="${empresa.email != null}" th:text="'E-mail: ' + ${empresa.email}">E-mail</div>
+        </td>
     </tr>
-    </thead>
-    <tbody>
-    <tr th:each="item : ${os.itens}">
-        <td th:text="${item.tipo.name() == 'PECA'} ? 'Peça' : 'Serviço'">Tipo</td>
-        <td th:text="${item.descricao}">Descrição</td>
-        <td class="num" th:text="${item.quantidade}">1</td>
-        <td class="num" th:text="'R$ ' + ${#numbers.formatDecimal(item.valorUnitario, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</td>
-        <td class="num" th:text="'R$ ' + ${#numbers.formatDecimal(item.subtotal, 1, 'POINT', 2, 'COMMA')}">R$ 0,00</td>
-    </tr>
-    </tbody>
 </table>
 
-<p class="total" th:text="'Total: R$ ' + ${#numbers.formatDecimal(os.valorTotal, 1, 'POINT', 2, 'COMMA')}">Total</p>
+<p class="titulo">ORDEM DE SERVIÇO</p>
+
+<table class="campos">
+    <tr>
+        <td>
+            <span class="rotulo">Número</span>
+            <strong th:text="${#numbers.formatInteger(os.id, 6, 'NONE')}">000001</strong>
+        </td>
+        <td>
+            <span class="rotulo">Emissão</span>
+            <span th:text="${#temporals.format(os.dataAbertura, 'dd/MM/yyyy HH:mm')}">01/01/2026 10:00</span>
+        </td>
+        <td>
+            <span class="rotulo">KM</span>
+            <span th:text="${os.km != null ? os.km : '-'}">0</span>
+        </td>
+    </tr>
+</table>
+
+<div class="caixa" style="margin-top: 3mm;">
+    <h2>Cliente</h2>
+    Nome: <strong th:text="${os.nomeCliente}">Nome</strong><br/>
+    Telefone: <span th:text="${os.telefone}">Telefone</span>
+</div>
+
+<div class="caixa">
+    <h2>Veículo</h2>
+    Placa: <strong th:text="${os.placa}">ABC1D23</strong>
+    <span th:if="${os.modelo != null}"> &#160;&#160; Modelo: <span th:text="${os.modelo}">Modelo</span></span>
+</div>
+
+<div class="caixa" th:if="${os.observacoes != null}">
+    <h2>Observações</h2>
+    <div class="obs" th:text="${os.observacoes}">Observações</div>
+</div>
+
+<div th:if="${!pecas.isEmpty()}">
+    <h3>Peças</h3>
+    <table class="itens">
+        <thead>
+        <tr>
+            <th>Descrição</th>
+            <th class="num">Qtd</th>
+            <th class="num">Valor unit. (R$)</th>
+            <th class="num">Total (R$)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${pecas}">
+            <td th:text="${item.descricao}">Descrição</td>
+            <td class="num" th:text="${item.quantidade}">1</td>
+            <td class="num" th:text="${fmt.valor(item.valorUnitario)}">0,00</td>
+            <td class="num" th:text="${fmt.valor(item.subtotal)}">0,00</td>
+        </tr>
+        <tr class="subtotal">
+            <td colspan="3" class="num">Subtotal de peças</td>
+            <td class="num" th:text="${fmt.valor(subtotalPecas)}">0,00</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:if="${!servicos.isEmpty()}">
+    <h3>Serviços</h3>
+    <table class="itens">
+        <thead>
+        <tr>
+            <th>Descrição</th>
+            <th class="num">Qtd</th>
+            <th class="num">Valor unit. (R$)</th>
+            <th class="num">Total (R$)</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${servicos}">
+            <td th:text="${item.descricao}">Descrição</td>
+            <td class="num" th:text="${item.quantidade}">1</td>
+            <td class="num" th:text="${fmt.valor(item.valorUnitario)}">0,00</td>
+            <td class="num" th:text="${fmt.valor(item.subtotal)}">0,00</td>
+        </tr>
+        <tr class="subtotal">
+            <td colspan="3" class="num">Subtotal de serviços</td>
+            <td class="num" th:text="${fmt.valor(subtotalServicos)}">0,00</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<p class="total">TOTAL GERAL: <span th:text="${fmt.moeda(os.valorTotal)}">R$ 0,00</span></p>
+
 </body>
 </html>
