@@ -75,7 +75,7 @@
 <div class="caixa" style="margin-top: 3mm;">
     <h2>Cliente</h2>
     Nome: <strong th:text="${os.nomeCliente}">Nome</strong><br/>
-    Telefone: <span th:text="${os.telefone}">Telefone</span>
+    Telefone: <span th:text="${fmt.telefone(os.telefone)}">Telefone</span>
 </div>
 
 <div class="caixa">

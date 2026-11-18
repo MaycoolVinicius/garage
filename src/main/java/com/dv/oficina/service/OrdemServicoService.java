@@ -27,11 +27,13 @@ public class OrdemServicoService {
 
     @Transactional
     public OrdemServicoResponse criar(OrdemServicoRequest request) {
-        Cliente cliente = clienteRepository.findByTelefone(request.telefone().trim())
+        String telefone = apenasDigitos(request.telefone());
+
+        Cliente cliente = clienteRepository.findByTelefone(telefone)
                 .orElseGet(() -> {
                     Cliente novo = new Cliente();
                     novo.setNome(request.nomeCliente().trim());
-                    novo.setTelefone(request.telefone().trim());
+                    novo.setTelefone(telefone);
                     return clienteRepository.save(novo);
                 });
 
@@ -86,9 +88,16 @@ public class OrdemServicoService {
     @Transactional(readOnly = true)
     public List<OrdemServicoResumo> listar(String busca) {
         var pagina = PageRequest.of(0, 50);
-        List<OrdemServico> resultado = (busca == null || busca.isBlank())
-                ? ordemServicoRepository.findAllByOrderByDataAberturaDesc(pagina)
-                : ordemServicoRepository.buscar(busca.trim(), pagina);
+        String termo = busca == null ? "" : busca.trim();
+
+        List<OrdemServico> resultado;
+        if (termo.isEmpty()) {
+            resultado = ordemServicoRepository.findAllByOrderByDataAberturaDesc(pagina);
+        } else {
+            boolean pareceTelefone = termo.matches("[\\d\\s()+.\\-]+");
+            String digitos = pareceTelefone ? apenasDigitos(termo) : "";
+            resultado = ordemServicoRepository.buscar(termo, digitos, pagina);
+        }
 
         return resultado.stream()
                 .map(os -> new OrdemServicoResumo(
@@ -102,4 +111,9 @@ public class OrdemServicoService {
     private String textoOuNulo(String texto) {
         return (texto == null || texto.isBlank()) ? null : texto.trim();
     }
+
+    private String apenasDigitos(String texto) {
+        return texto == null ? "" : texto.replaceAll("\\D", "");
+    }
+
 }

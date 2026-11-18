@@ -32,4 +32,19 @@ public class PdfFormatos {
                 + digitos.substring(5, 8) + "/" + digitos.substring(8, 12) + "-"
                 + digitos.substring(12);
     }
+
+    /** "41999990000" -> "(41) 99999-0000" */
+    public String telefone(String valor) {
+        if (valor == null) {
+            return "";
+        }
+        String d = valor.replaceAll("\\D", "");
+        if (d.length() == 11) {
+            return "(" + d.substring(0, 2) + ") " + d.substring(2, 7) + "-" + d.substring(7);
+        }
+        if (d.length() == 10) {
+            return "(" + d.substring(0, 2) + ") " + d.substring(2, 6) + "-" + d.substring(6);
+        }
+        return valor;
+    }
 }

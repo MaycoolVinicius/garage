@@ -16,11 +16,13 @@ public interface OrdemServicoRepository extends JpaRepository<OrdemServico, Long
 
     @EntityGraph(attributePaths = "cliente")
     @Query("""
-            select os from OrdemServico os
-            where upper(os.placa) like upper(concat('%', :busca, '%'))
-               or upper(os.cliente.nome) like upper(concat('%', :busca, '%'))
-               or os.cliente.telefone like concat('%', :busca, '%')
-            order by os.dataAbertura desc
-            """)
-    List<OrdemServico> buscar(@Param("busca") String busca, Pageable pageable);
+        select os from OrdemServico os
+        where upper(os.placa) like upper(concat('%', :busca, '%'))
+           or upper(os.cliente.nome) like upper(concat('%', :busca, '%'))
+           or (:digitos <> '' and os.cliente.telefone like concat('%', :digitos, '%'))
+        order by os.dataAbertura desc
+        """)
+    List<OrdemServico> buscar(@Param("busca") String busca,
+                              @Param("digitos") String digitos,
+                              Pageable pageable);
 }
