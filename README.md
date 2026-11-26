@@ -23,6 +23,15 @@ no servidor e PDF pronto para impressão.
 |---|---|
 | ![PDF](docs/img/pdf.jpeg) | ![Configurações](docs/img/configuracoes.jpeg) |
 
+## Demo
+
+- App: https://garage-web-zeta.vercel.app/login
+- Usuário: `demo` · Senha: `1234`
+
+> A API roda em plano gratuito e "dorme" após 15 minutos sem uso: o primeiro
+> acesso pode levar até 1 minuto. Todos os dados são fictícios, e qualquer
+> visitante pode alterá-los.
+
 ## Funcionalidades
 
 - Login com JWT (senha com BCrypt, sessão sem estado)
